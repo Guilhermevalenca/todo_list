@@ -20,6 +20,7 @@ export default {
     props: {
         id: Number
     },
+    emits: ['update_todos','show_todos'], 
     functional: true,
     data() {
         return {
