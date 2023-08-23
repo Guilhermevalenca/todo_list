@@ -1,5 +1,0 @@
-.env
-.env.backup
-.env.production
-
-vendor/
