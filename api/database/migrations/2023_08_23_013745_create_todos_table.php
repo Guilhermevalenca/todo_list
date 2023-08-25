@@ -13,6 +13,9 @@ return new class extends Migration
     {
         Schema::create('todos', function (Blueprint $table) {
             $table->id();
+            $table->string('name')->unique();
+            $table->string('responsible');
+            $table->boolean('status')->default(0);
             $table->timestamps();
         });
     }

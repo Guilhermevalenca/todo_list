@@ -13,8 +13,15 @@ import { createApp } from 'vue'
 // Plugins
 import { registerPlugins } from '@/plugins'
 
+// Axios
+import axios from 'axios';
+
 const app = createApp(App)
 
 registerPlugins(app)
 
 app.mount('#app')
+
+axios.defaults.baseURL = 'http://localhost:8000/api';
+axios.defaults.headers.common['Authorization'] = localStorage.getItem('token');
+axios.defaults.headers.common['Accept'] = 'application/json';
