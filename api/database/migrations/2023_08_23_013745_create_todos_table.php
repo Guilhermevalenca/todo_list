@@ -14,7 +14,9 @@ return new class extends Migration
         Schema::create('todos', function (Blueprint $table) {
             $table->id();
             $table->string('name')->unique();
-            $table->string('responsible');
+            $table->foreignId('user_id')
+                ->constrained()
+                ->onUpdate('CASCADE');
             $table->boolean('status')->default(0);
             $table->timestamps();
         });
