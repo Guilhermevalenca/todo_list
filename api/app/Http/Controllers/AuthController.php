@@ -11,7 +11,7 @@ class AuthController extends Controller
     {
         if(Auth::attempt($request->only('email','password'))) {
             $token = $request->user()->createToken('user_login');
-            return response($token, $status);
+            return response($token->plainTextToken, $status);
         }
         return response('',401);
     }

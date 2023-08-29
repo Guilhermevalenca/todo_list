@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\TodoResource;
 use App\Models\Todo;
 use Illuminate\Http\Request;
 
@@ -9,12 +10,14 @@ class TodoController extends Controller
 {
     public function index()
     {
-        return response(Todo::all(),200);
+        $todo = TodoResource::collection(Todo::paginate());
+        return response($todo,200);
     }
     public function show($id)
     {
         try {
-            return response(Todo::findOrFail($id),200);
+            $todo = new TodoResource(Todo::findOrFail($id));
+            return response($todo,200);
         } catch (\Exception $e) {
             return response($e,404);
         }
@@ -26,11 +29,8 @@ class TodoController extends Controller
                 'name' => 'required',
                 'user_id' => 'required'
             ]);
-            $todo = Todo::create([
-                'name' => $todo['name'],
-                'user_id' => $todo['user_id']
-            ]);
-            return response($todo,200);
+            $response = Todo::create($todo);
+            return response($response,200);
         } catch (\Exception $e) {
             return response($e,304);
         }

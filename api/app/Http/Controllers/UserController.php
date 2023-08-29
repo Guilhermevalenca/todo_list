@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\UserResource;
+use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 use App\Models\User;
 
@@ -10,7 +12,8 @@ class UserController extends Controller
     public function show(Request $request)
     {
         try{
-            return response($request->user(),200);
+            $user = new UserResource($request->user());
+            return response($user,200);
         } catch (\Exception $e) {
             return $e;
         }
@@ -40,8 +43,8 @@ class UserController extends Controller
             ]);
             $auth = new AuthController();
             return $auth->login($request,201);
-        } catch (\Exception $e) {
-            return $e;
+        } catch (QueryException $e) {
+            return response($e->errorInfo,409);
         }
     }
     public function update(Request $request)

@@ -3,7 +3,7 @@
   <v-btn @click="isCreateOpen = true" >Criar conta</v-btn>
 
   <Login v-model="isLoginOpen" />
-  <Create v-model="isCreateOpen" @close="isCreateOpen = false" />
+  <Create v-model="isCreateOpen" @close_create_user="isCreateOpen = false" />
 </template>
 
 <script>
