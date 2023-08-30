@@ -9,10 +9,15 @@ use App\Models\User;
 
 class UserController extends Controller
 {
-    public function show(Request $request)
+    public function index()
+    {
+        $users = UserResource::collection(User::paginate());
+        return response($users, 200);
+    }
+    public function show($id)
     {
         try{
-            $user = new UserResource($request->user());
+            $user = new UserResource(User::findOrFail($id));
             return response($user,200);
         } catch (\Exception $e) {
             return $e;

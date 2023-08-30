@@ -12,9 +12,10 @@
 </template>
 
 <script>
-import Login from "@/layouts/default/user/Login.vue";
-import Create from "@/layouts/default/user/Create.vue";
-import AuthenticatedUser from "@/layouts/default/user/Authenticated.vue";
+import Login from "@/layouts/default/user/UserLogin.vue";
+import Create from "@/layouts/default/user/UserCreate.vue";
+import AuthenticatedUser from "@/layouts/default/user/UserAuthenticated.vue";
+import axios from "axios";
 export default {
   name: "UserBar",
   components: {AuthenticatedUser, Create, Login},
@@ -27,7 +28,18 @@ export default {
   },
   created() {
     if(localStorage.getItem('token')) {
-      this.isLoggedUser = true;
+      axios.get('user')
+        .then(response => {
+          if(response.data === "") {
+            localStorage.removeItem('token');
+          } else {
+            this.isLoggedUser = true;
+          }
+        })
+        .catch(error => {
+          console.log(error);
+          this.isLoggedUser = false;
+        })
     }
   }
 }

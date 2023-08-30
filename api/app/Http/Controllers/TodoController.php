@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Resources\TodoResource;
 use App\Models\Todo;
+use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 
 class TodoController extends Controller
@@ -37,9 +38,39 @@ class TodoController extends Controller
     }
     public function update(Request $request)
     {
-        $todo = $request->validate([
-            'name' => 'required',
-            'user' => 'required'
-        ]);
+        try {
+            $todo = $request->validate([
+                'name' => 'required',
+                'user' => 'required'
+            ]);
+            $todo = Todo::update($todo);
+            return response($todo,200);
+        } catch (QueryException $e) {
+            return $e->errorInfo;
+        }
+    }
+    public function update_status($id)
+    {
+        try {
+            $todo = Todo::findOrFail($id);
+            $todo->update([
+                'status' => !$todo['status']
+            ]);
+            return response($todo,200);
+        } catch (QueryException $e) {
+            return $e->errorInfo;
+        }
+    }
+    public function delete(Request $request)
+    {
+        try {
+            $todo = $request->validate([
+                'id' => 'required'
+            ]);
+            $todo = Todo::destroy($todo['id']);
+            return response($todo,200);
+        } catch (QueryException $e) {
+            return $e->errorInfo;
+        }
     }
 }

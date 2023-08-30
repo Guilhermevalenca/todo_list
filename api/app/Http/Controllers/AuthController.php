@@ -20,5 +20,8 @@ class AuthController extends Controller
         $request->user()->currentAccessToken()->delete();
         return response('Revoked Token',200);
     }
-
+    public function me(Request $request)
+    {
+        return response($request->user(),200);
+    }
 }

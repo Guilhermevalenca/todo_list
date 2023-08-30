@@ -7,9 +7,9 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\AuthController;
 
 
-//Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-//    return $request->user();
-//});
+Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
+    return $request->user();
+});
 
 
 Route::prefix('todo_list')
@@ -35,12 +35,13 @@ Route::prefix('users')
         Route::controller(AuthController::class)
             ->group(function() {
                 Route::post('login','login');
-                Route::get('logout','logout');
+                Route::post('logout','logout')->middleware('auth:sanctum');
             });
 
         Route::middleware('auth:sanctum')
             ->group(function() {
-                Route::get('','show');
+                Route::get('','index');
+                Route::get('{id}','show');
                 Route::put('','update');
                 Route::delete('','delete');
             });
