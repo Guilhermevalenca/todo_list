@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Resources\TodoResource;
 use App\Models\Todo;
+use App\Models\User;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 
@@ -30,8 +31,11 @@ class TodoController extends Controller
                 'name' => 'required',
                 'user_id' => 'required'
             ]);
-            $response = Todo::create($todo);
-            return response($response,200);
+            Todo::create([
+                'name' => $todo['name'],
+                'user_id' => $todo['user_id']
+            ]);
+            return response('success',200);
         } catch (\Exception $e) {
             return response($e,304);
         }

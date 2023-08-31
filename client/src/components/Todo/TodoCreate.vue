@@ -1,16 +1,18 @@
 <template>
   <v-dialog width="500px">
     <v-card>
+      <v-card-title>Criar tarefa</v-card-title>
+      <v-card-subtitle>Aqui você pode criar uma tarefa</v-card-subtitle>
       <v-form @submit.prevent="registerTodo()">
         <v-card-text>
           <v-row>
             <v-col>
-              <v-text-field v-model="name" label="Nome" placeholder="Nome da tarefa" hint="tarefa" required />
+              <v-text-field v-model="name" label="Nome da tarefa" placeholder="digite o nome da tarefa" hint="Tarefa" required />
             </v-col>
           </v-row>
           <v-row>
             <v-col>
-              <v-autocomplete label="Responsável" :item-value="users.search" v-model="users.picked" :items="showUsers" placeholder="Selecione ..." required />
+              <v-autocomplete :return-object="true" label="Responsável" v-model="users.picked" v-model:search="users.search" :items="showUsers" placeholder="Selecione..." required />
             </v-col>
           </v-row>
         </v-card-text>
@@ -40,30 +42,25 @@ export default {
   },
   methods: {
     registerTodo() {
+      //Procurando o indice equivalente ao resultado escolhido pelo usuario, sabendo o indice ele consegue saber qual user foi escolhido no outro array de usuarios
+      const user = this.showUsers.findIndex( (elements) => {
+        return elements === this.users.picked;
+      });
+      const id = this.users.all[user].id
       axios.post('todo_list',{
         name: this.name,
-        user_id: this.userResponsible.id
+        user_id: id
       })
-        .then(response => {
-          console.log(response);
-        });
+        .then(() => this.$emit('close_todo_create'))
+        .catch(error => console.log(error));
     },
     getUsers() {
       axios.post('users',{
         partialName: this.users.search
       })
-        .then(response => console.log(response))
+        .then(response => this.users.all = response.data)
         .catch(error => console.log(error));
     },
-    updateListUser() {
-      if(this.users.search !== null) {
-        if(this.users.search.length <= 2) {
-          this.getUsers();
-        } else if(this.users.search.length % 3 === 0) {
-          this.getUsers();
-        }
-      }
-    }
   },
   computed: {
     showUsers() {
@@ -71,20 +68,18 @@ export default {
         return `Nome: ${users.name} Email: ${users.email}`;
       });
       return dataUsers;
-    },
-    userResponsible() {
-      const user = this.showUsers.find( (users, index) => {
-        if(users === this.users.picked) {
-          return this.users.all[index];
-        }
-      });
-        return user;
     }
   },
   watch: {
     users: {
       handler($new) {
-        console.log($new);
+        if($new.search !== null && $new.search.length >= 1) {
+          if($new.search.length === 1) {
+            this.getUsers();
+          } else if($new.search.length % 5 === 0) {
+            this.getUsers();
+          }
+        }
       },
       deep: true
     }

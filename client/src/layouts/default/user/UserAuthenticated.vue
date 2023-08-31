@@ -38,6 +38,9 @@ export default {
         })
         .catch(error => console.log(error))
     }
+  },
+  created() {
+    axios.defaults.headers.common['Authorization'] = `Bearer ${localStorage.getItem('token')}`;
   }
 }
 </script>
