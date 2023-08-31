@@ -3,11 +3,11 @@
     <v-btn color="secondary" @click="isLoginOpen = true">Login</v-btn>
     <v-btn @click="isCreateOpen = true" >Criar conta</v-btn>
 
-    <Login v-model="isLoginOpen" @close_login_user="isLoginOpen = false" @loggaed="isLoggedUser = true"/>
-    <Create v-model="isCreateOpen" @close_create_user="isCreateOpen = false" @loggaed="isLoggedUser = true" />
+    <Login v-model="isLoginOpen" @close_login_user="isLoginOpen = false" @logged="isLoginOpen = false;isLoggedUser = true"/>
+    <Create v-model="isCreateOpen" @close_create_user="isCreateOpen = false" @logged="isCreateOpen = false;isLoggedUser = true" />
   </div>
   <div v-else>
-    <AuthenticatedUser />
+    <AuthenticatedUser @logout="isLoggedUser = false" />
   </div>
 </template>
 
@@ -37,7 +37,7 @@ export default {
           }
         })
         .catch(error => {
-          console.log(error);
+          // console.log(error);
           this.isLoggedUser = false;
         })
     }

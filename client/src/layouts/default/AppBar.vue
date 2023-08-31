@@ -2,9 +2,13 @@
   <v-app-bar>
     <v-app-bar-nav-icon @click="$emit('drawer')" />
     <v-app-bar-title>Todo list</v-app-bar-title>
-    <v-btn @click="alterTheme()">
-      <v-icon icon="mdi-theme-light-dark" />
-    </v-btn>
+    <v-tooltip text="Clique para alterar o tema da página">
+      <template #activator="{ props }">
+        <v-btn v-bind="props" @click="alterTheme()">
+          <v-icon icon="mdi-theme-light-dark" />
+        </v-btn>
+      </template>
+    </v-tooltip>
     <UserBar />
   </v-app-bar>
 </template>

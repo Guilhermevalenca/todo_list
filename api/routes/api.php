@@ -42,6 +42,7 @@ Route::prefix('users')
             ->group(function() {
                 Route::get('','index');
                 Route::get('{id}','show');
+                Route::post('','findUsersByName');
                 Route::put('','update');
                 Route::delete('','delete');
             });

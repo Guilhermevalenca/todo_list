@@ -158,7 +158,6 @@ export default {
           .then(response => {
             localStorage.setItem('token',response.data);
             this.$emit('logged');
-            this.$emit('close_create_user');
           })
           .catch(error => {
             if(error.response.data[1] === 1062) {

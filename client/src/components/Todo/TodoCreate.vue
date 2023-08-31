@@ -1,42 +1,16 @@
 <template>
-  <v-dialog width="600px">
+  <v-dialog width="500px">
     <v-card>
       <v-form @submit.prevent="registerTodo()">
         <v-card-text>
           <v-row>
-            <v-col md="8">
-              <v-text-field v-model="name" label="Nome" placeholder="Nome da tarefa" hint="tarefa" />
+            <v-col>
+              <v-text-field v-model="name" label="Nome" placeholder="Nome da tarefa" hint="tarefa" required />
             </v-col>
           </v-row>
           <v-row>
-            <v-col md="9">
-              <v-select v-model="users.picked" label="Responsável" placeholder="escolha um responsável para tarefa" :items="userEmails" />
-              <v-card v-if="infoUsers">
-                <v-list>
-                  <v-list-item>
-                    Nome: {{ infoUsers.name }}
-                  </v-list-item>
-                  <v-list-item>
-                    Cargo: {{ infoUsers.position }}
-                  </v-list-item>
-                </v-list>
-              </v-card>
-            </v-col>
             <v-col>
-              <v-row>
-                <v-tooltip text="Próxima lista de usuários">
-                  <template #activator="{ props }">
-                    <v-btn v-bind="props" prepend-icon="mdi-plus" @click="users.page++;getUsers()">Ver mais</v-btn>
-                  </template>
-                </v-tooltip>
-              </v-row>
-              <v-row>
-                <v-tooltip text="Voltar lista de usuários">
-                  <template #activator="{ props }">
-                    <v-btn v-bind="props" prepend-icon="mdi-minus" @click="users.page--;getUsers()">Ver menos</v-btn>
-                  </template>
-                </v-tooltip>
-              </v-row>
+              <v-autocomplete label="Responsável" :item-value="users.search" v-model="users.picked" :items="showUsers" placeholder="Selecione ..." required />
             </v-col>
           </v-row>
         </v-card-text>
@@ -59,66 +33,60 @@ export default {
       name: '',
       users: {
         all: [],
-        picked: null,
-        page: 0
-      },
-      oldPage: this.page
+        picked: '',
+        search: ''
+      }
     }
   },
   methods: {
     registerTodo() {
       axios.post('todo_list',{
         name: this.name,
-        user_id: this.infoUsers.id
+        user_id: this.userResponsible.id
       })
         .then(response => {
           console.log(response);
         });
     },
     getUsers() {
-      axios.get('users',{
-        params: {
-          page: this.users.page
-        }
+      axios.post('users',{
+        partialName: this.users.search
       })
-        .then(response => {
-          if(response.data) {
-            this.users.all = response.data;
-            this.oldPage = this.users.page;
-          }else {
-            this.users.page = this.oldPage;
-          }
-        })
+        .then(response => console.log(response))
         .catch(error => console.log(error));
+    },
+    updateListUser() {
+      if(this.users.search !== null) {
+        if(this.users.search.length <= 2) {
+          this.getUsers();
+        } else if(this.users.search.length % 3 === 0) {
+          this.getUsers();
+        }
+      }
     }
   },
   computed: {
-      userEmails() {
-        const emails = this.users.all.map(user => {
-          return user.email;
-        });
-        return emails;
-      },
-      infoUsers() {
-        const users = this.users.all.find(user => {
-          if(user.email === this.users.picked) {
-            return user;
-          }
-        });
-        return users;
-      }
-  },
-  mounted() {
-    this.getUsers();
+    showUsers() {
+      const dataUsers = this.users.all.map(users => {
+        return `Nome: ${users.name} Email: ${users.email}`;
+      });
+      return dataUsers;
+    },
+    userResponsible() {
+      const user = this.showUsers.find( (users, index) => {
+        if(users === this.users.picked) {
+          return this.users.all[index];
+        }
+      });
+        return user;
+    }
   },
   watch: {
     users: {
       handler($new) {
-        if($new.page < 1) {
-          this.users.page = 1;
-        }
+        console.log($new);
       },
-      deep:true
+      deep: true
     }
   }
 }

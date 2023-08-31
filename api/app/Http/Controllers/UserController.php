@@ -19,6 +19,19 @@ class UserController extends Controller
         try{
             $user = new UserResource(User::findOrFail($id));
             return response($user,200);
+        } catch (QueryException $e) {
+            return $e;
+        }
+    }
+    public function findUsersByName(Request $request)
+    {
+        try {
+            $validate = $request->validate([
+                'partialName' => 'required'
+            ]);
+            $partialName = '%' . $validate['partialName'] . '%';
+            $users = UserResource::collection(User::where('name','LIKE',$partialName)->get());
+            return response($users,200);
         } catch (\Exception $e) {
             return $e;
         }

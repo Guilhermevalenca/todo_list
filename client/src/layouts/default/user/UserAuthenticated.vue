@@ -33,6 +33,7 @@ export default {
         .then(response => {
           if(response.data) {
             localStorage.removeItem('token');
+            this.$emit('logout');
           }
         })
         .catch(error => console.log(error))

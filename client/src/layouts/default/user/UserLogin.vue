@@ -106,7 +106,6 @@ export default {
         .then(response => {
           localStorage.setItem('token',response.data);
           this.$emit('logged');
-          this.$emit('close_login_user');
         })
         .catch(error => {
           this.message.alert = true;
