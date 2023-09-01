@@ -37,9 +37,18 @@ export default {
           }
         })
         .catch(error => {
-          // console.log(error);
+          console.log(error);
           this.isLoggedUser = false;
         })
+    }
+  },
+  watch: {
+    isLoggedUser: {
+      handler() {
+          window.dispatchEvent(new Event('token_changed'));
+          //Evento sendo escutado no created do componente Home.vue do diretório views
+      },
+      deep: false
     }
   }
 }

@@ -23,7 +23,7 @@ registerPlugins(app)
 
 app.mount('#app');
 
-axios.defaults.baseURL = 'http://localhost:8000/api';
+axios.defaults.baseURL = 'http://192.168.100.11:8000/api';
 axios.defaults.headers.common['Authorization'] = `Bearer ${localStorage.getItem('token')}`;
 axios.interceptors.request.use((config) => {
   // console.log(config);

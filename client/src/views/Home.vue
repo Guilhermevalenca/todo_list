@@ -7,7 +7,7 @@
         <v-col md="10">
           <TodoSearch />
         </v-col>
-        <v-col v-if="logged">
+        <v-col v-if="logged" md="0">
           <v-btn prepend-icon="mdi-form-select" color="secondary" @click="createTodo.show = true">Criar tarefa</v-btn>
         </v-col>
       </v-row>
@@ -21,6 +21,7 @@
           <th>Email</th>
           <th>Cargo</th>
           <th>Situação atual</th>
+          <th></th>
         </tr>
         </thead>
         <tbody>
@@ -30,17 +31,23 @@
           <td>{{ todo.user.email }}</td>
           <td>{{ todo.user.position }}</td>
           <td v-if="logged">
-            <v-btn @click="updateStatus(todo.id)" :color="todo.status ? 'success' : 'warning'">{{ todo.status ? 'Concluida' : 'Não concluida'}}</v-btn>
+            <v-tooltip text="Clique para alterar a situação atual da tarefa">
+              <template #activator="{ props }">
+                <v-btn v-bind="props" @click="updateStatus(todo.id)" :color="todo.status ? 'success' : 'warning'">{{ todo.status ? 'Concluida' : 'Não concluida'}}</v-btn>
+              </template>
+            </v-tooltip>
           </td>
           <td v-if="!logged">{{ todo.status ? 'Concluida' : 'Não concluida' }}</td>
-          <td v-if="logged" ><v-list>
-            <v-list-item>
-              <v-btn @click="todoInfo.currentTodo = todo; todoInfo.show = true;">atualizar tarefa</v-btn>
-            </v-list-item>
-            <v-list-item>
-              <v-btn @click="deleteTodo(todo.id)">apagar tarefa</v-btn>
-            </v-list-item>
-          </v-list></td>
+          <td v-if="logged" >
+            <v-row>
+              <v-col />
+              <v-col>
+                <v-btn @click="todoInfo.currentTodo = todo; todoInfo.show = true;">atualizar tarefa</v-btn>
+                <v-btn @click="deleteTodo(todo.id)">apagar tarefa</v-btn>
+              </v-col>
+              <v-col />
+            </v-row>
+          </td>
         </tr>
         </tbody>
       </v-table>
@@ -83,6 +90,9 @@ export default {
   },
   created() {
     this.allTodos();
+    window.addEventListener('token_changed',() => {
+      this.logged = localStorage.getItem('token') !== null;
+    });
   },
   methods: {
     allTodos() {
@@ -136,6 +146,15 @@ export default {
         this.allTodos();
       },
       deep: false
+    },
+    localStorage: {
+      handler($new) {
+        console.log($new);
+        if($new.getItem('token')) {
+          this.logged = localStorage.getItem('token') !== null;
+        }
+      },
+      deep: true
     }
   }
 }
