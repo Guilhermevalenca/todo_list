@@ -12,8 +12,11 @@ class TodoController extends Controller
 {
     public function index()
     {
-        $todo = TodoResource::collection(Todo::paginate(10));
-        return response($todo,200);
+        $response = [
+            'todos' => TodoResource::collection(Todo::paginate(10)),
+            'totalPage' => Todo::paginate()->lastPage()
+        ];
+        return response($response,200);
     }
     public function show($id)
     {

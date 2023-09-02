@@ -18,6 +18,9 @@
           <v-btn prepend-icon="mdi-page-previous-outline" @click="currentPage--" color="primary">Voltar pagina</v-btn>
           <v-btn prepend-icon="mdi-page-next-outline" @click="currentPage++" color="secondary">Próxima pagina</v-btn>
         </v-col>
+        <v-col>
+          <v-text-field :clearable="false" @update:model-value="value => currentPage < limitPage" label="Pagina" type="number" placeholder="Digite para qual pagina você deseja ir" v-model.number="currentPage" />
+        </v-col>
       </v-row>
     </v-card-actions>
     <v-card-text  class="d-flex justify-center">
@@ -77,6 +80,7 @@ export default {
     return {
       todos: [],
       currentPage: 1,
+      limitPage: 1,
       validPage : this.currentPage,
       todoInfo: {
         currentTodo: null,
@@ -105,8 +109,10 @@ export default {
           }
         })
           .then(response => {
-            if(this.validateTodos(response.data)) {
-              this.todos = response.data;
+            if(this.validateTodos(response.data.todos)) {
+              this.todos = response.data.todos;
+              this.limitPage = response.data.totalPage;
+
             }
           })
           .catch(error => console.log(error))
@@ -122,7 +128,8 @@ export default {
         axios.post('todo_list/search',data,config)
           .then(response => {
             if(this.validateTodos(response.data)) {
-              this.todos = response.data
+              this.todos = response.data;
+              this.limitPage = response.data.TotalPage;
             }
           })
           .catch(error => console.log(error));
@@ -176,7 +183,7 @@ export default {
   watch: {
     currentPage: {
       handler($new) {
-        if($new < 1) {
+        if($new < 0) {
           this.currentPage = 1;
         }
         // console.log($new);
