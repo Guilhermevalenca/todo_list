@@ -17,6 +17,7 @@ Route::prefix('todo_list')
     ->whereNumber('id')
     ->group(function() {
         Route::get('','index');
+        Route::post('search','findTodosByName');
 
         Route::middleware('auth:sanctum')
             ->group(function() {

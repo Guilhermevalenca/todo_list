@@ -12,7 +12,7 @@
           </v-row>
           <v-row>
             <v-col>
-              <v-autocomplete :return-object="true" label="Responsável" v-model="users.picked" v-model:search="users.search" :items="showUsers" placeholder="Selecione..." required />
+              <v-autocomplete label="Responsável" v-model="users.picked" v-model:search="users.search" :items="showUsers" placeholder="Selecione..." required />
             </v-col>
           </v-row>
         </v-card-text>
@@ -46,6 +46,7 @@ export default {
       const user = this.showUsers.findIndex( (elements) => {
         return elements === this.users.picked;
       });
+      console.log(this.users.all);
       const id = this.users.all[user].id
       axios.post('todo_list',{
         name: this.name,
@@ -76,7 +77,9 @@ export default {
         if($new.search !== null && $new.search.length >= 1) {
           if($new.search.length === 1) {
             this.getUsers();
-          } else if($new.search.length % 5 === 0) {
+          } else if($new.search.length === 3) {
+            this.getUsers();
+          } else if($new.search.length === 5) {
             this.getUsers();
           }
         }

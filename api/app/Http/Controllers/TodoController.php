@@ -24,6 +24,19 @@ class TodoController extends Controller
             return response($e,404);
         }
     }
+    public function findTodosByName(Request $request)
+    {
+        try {
+            $request->validate([
+                'name' => 'required'
+            ]);
+            $name = $request->input('name') . '%';
+            $todo = TodoResource::collection(Todo::where('name','LIKE',$name)->paginate());
+            return response($todo,200);
+        } catch (\Exception $e) {
+            return $e;
+        }
+    }
     public function store(Request $request)
     {
         try {

@@ -4,16 +4,24 @@
     <v-card-subtitle>Aqui você poderá visualizar suas tarefas</v-card-subtitle>
     <v-card-actions>
       <v-row>
-        <v-col md="10">
-          <TodoSearch />
+        <v-col>
+          <TodoSearch @dataSearch="(response) => searchLoading(response)" @notSearch="notSearch()" />
         </v-col>
-        <v-col v-if="logged" md="0">
+      </v-row>
+    </v-card-actions>
+    <v-card-actions>
+      <v-row>
+        <v-col v-if="logged" md="2">
           <v-btn prepend-icon="mdi-form-select" color="secondary" @click="createTodo.show = true">Criar tarefa</v-btn>
+        </v-col>
+        <v-col>
+          <v-btn prepend-icon="mdi-page-previous-outline" @click="currentPage--" color="primary">Voltar pagina</v-btn>
+          <v-btn prepend-icon="mdi-page-next-outline" @click="currentPage++" color="secondary">Próxima pagina</v-btn>
         </v-col>
       </v-row>
     </v-card-actions>
     <v-card-text  class="d-flex justify-center">
-      <v-table density="compact">
+      <v-table density="comfortable">
         <thead>
         <tr>
           <th>Nome da tarefa</th>
@@ -52,14 +60,6 @@
         </tbody>
       </v-table>
     </v-card-text>
-    <v-card-actions>
-      <v-row>
-        <v-col md="10">
-          <v-btn prepend-icon="mdi-page-previous-outline" @click="currentPage--" color="primary">Voltar pagina</v-btn>
-          <v-btn prepend-icon="mdi-page-next-outline" @click="currentPage++" color="secondary">Próxima pagina</v-btn>
-        </v-col>
-      </v-row>
-    </v-card-actions>
   </v-card>
   <TodoCreate v-model="createTodo.show" @close_todo_create="allTodos();createTodo.show = false" />
   <TodoUpdate v-if="todoInfo.show" v-model="todoInfo.show" :receivingTodo="todoInfo.currentTodo" @close_todo_info="todoInfo.show = false" />
@@ -85,7 +85,9 @@ export default {
       createTodo: {
         show: false
       },
-      logged: localStorage.getItem('token') !== null
+      logged: localStorage.getItem('token') !== null,
+      searchPage: false,
+      searchName: ''
     }
   },
   created() {
@@ -96,20 +98,35 @@ export default {
   },
   methods: {
     allTodos() {
-      axios.get('todo_list',{
-        params: {
-          page: this.currentPage
-        }
-      })
-        .then(response => {
-          if(response.data.length !== 0) {
-            this.todos = response.data
-            this.validPage = this.currentPage;
-          } else {
-            this.currentPage = this.validPage;
+      if(!this.searchPage) {
+        axios.get('todo_list',{
+          params: {
+            page: this.currentPage
           }
         })
-        .catch(error => console.log(error))
+          .then(response => {
+            if(this.validateTodos(response.data)) {
+              this.todos = response.data;
+            }
+          })
+          .catch(error => console.log(error))
+      } else {
+        const data = {
+          name: this.searchName
+        };
+        const config = {
+          params: {
+            page: this.currentPage
+          }
+        };
+        axios.post('todo_list/search',data,config)
+          .then(response => {
+            if(this.validateTodos(response.data)) {
+              this.todos = response.data
+            }
+          })
+          .catch(error => console.log(error));
+      }
     },
     updateStatus(id) {
       axios.patch(`todo_list/${id}`)
@@ -134,6 +151,26 @@ export default {
           }
         })
         .catch(error => console.log(error));
+    },
+    searchLoading(response) {
+      console.log(response);
+      this.currentPage = 0;
+      this.searchPage = true;
+      this.todos = response.data;
+      this.searchName = response.name
+    },
+    notSearch() {
+      this.searchPage = false;
+      this.currentPage = 0;
+      this.allTodos();
+    },
+    validateTodos(todos) {
+      if(todos.length !== 0) {
+        this.validPage = this.currentPage;
+        return true;
+      }
+      this.currentPage = this.validPage;
+      return false
     }
   },
   watch: {
@@ -155,7 +192,7 @@ export default {
         }
       },
       deep: true
-    }
+    },
   }
 }
 </script>
