@@ -15,6 +15,8 @@ import { registerPlugins } from '@/plugins'
 
 // Axios
 import axios from 'axios';
+
+// Sweetalert2
 import Swal from "sweetalert2";
 
 const app = createApp(App)
@@ -23,7 +25,9 @@ registerPlugins(app)
 
 app.mount('#app');
 
-axios.defaults.baseURL = 'http://192.168.100.11:8000/api';
+const baseURL = (import.meta.env.VITE_API_PREFIX + import.meta.env.VITE_API_BASE_URL + ':' + import.meta.env.VITE_API_PORT + '/' + import.meta.env.VITE_API_SUFFIX).toString();
+
+axios.defaults.baseURL = baseURL;
 axios.defaults.headers.common['Authorization'] = `Bearer ${localStorage.getItem('token')}`;
 axios.interceptors.request.use((config) => {
   // console.log(config);
