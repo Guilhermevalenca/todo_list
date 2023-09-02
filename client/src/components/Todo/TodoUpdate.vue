@@ -2,7 +2,7 @@
 <v-dialog width="800px">
   <v-card>
     <v-card-title>Informações da tarefa</v-card-title>
-    <v-card-subtitle>Aqui estão todos os dados disponíveis para está tarefa</v-card-subtitle>
+    <v-card-subtitle>Aqui estão todos os dados disponíveis para atualização</v-card-subtitle>
     <v-form>
       <v-card-text>
         <v-row>

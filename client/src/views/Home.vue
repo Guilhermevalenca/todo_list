@@ -18,9 +18,6 @@
           <v-btn prepend-icon="mdi-page-previous-outline" @click="currentPage--" color="primary">Voltar pagina</v-btn>
           <v-btn prepend-icon="mdi-page-next-outline" @click="currentPage++" color="secondary">Próxima pagina</v-btn>
         </v-col>
-        <v-col>
-          <v-text-field :clearable="false" @update:model-value="value => currentPage < limitPage" label="Pagina" type="number" placeholder="Digite para qual pagina você deseja ir" v-model.number="currentPage" />
-        </v-col>
       </v-row>
     </v-card-actions>
     <v-card-text  class="d-flex justify-center">
@@ -63,6 +60,14 @@
         </tbody>
       </v-table>
     </v-card-text>
+    <v-row>
+      <v-col md="5">
+        <v-pagination :length="limitPage" v-model="currentPage" rounded="circle" :total-visible="7"  />
+      </v-col>
+      <v-col md="1" v-if="!mobileScreen">
+        <v-text-field :clearable="false" @update:model-value="value => currentPage < limitPage" label="Pagina" type="number" persistent-placeholder placeholder="Digite..." v-model.number="currentPage" />
+      </v-col>
+    </v-row>
   </v-card>
   <TodoCreate v-model="createTodo.show" @close_todo_create="allTodos();createTodo.show = false" />
   <TodoUpdate v-if="todoInfo.show" v-model="todoInfo.show" :receivingTodo="todoInfo.currentTodo" @close_todo_info="todoInfo.show = false" />
@@ -91,7 +96,8 @@ export default {
       },
       logged: localStorage.getItem('token') !== null,
       searchPage: false,
-      searchName: ''
+      searchName: '',
+      mobileScreen: window.innerWidth < 768
     }
   },
   created() {
@@ -190,15 +196,6 @@ export default {
         this.allTodos();
       },
       deep: false
-    },
-    localStorage: {
-      handler($new) {
-        console.log($new);
-        if($new.getItem('token')) {
-          this.logged = localStorage.getItem('token') !== null;
-        }
-      },
-      deep: true
     },
   }
 }
