@@ -196,7 +196,7 @@ export default {
         this.allTodos();
       },
       deep: false
-    },
+    }
   }
 }
 </script>

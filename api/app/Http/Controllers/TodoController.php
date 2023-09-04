@@ -14,7 +14,7 @@ class TodoController extends Controller
     {
         $response = [
             'todos' => TodoResource::collection(Todo::paginate(10)),
-            'totalPage' => Todo::paginate()->lastPage()
+            'totalPage' => Todo::paginate(10)->lastPage()
         ];
         return response($response,200);
     }
