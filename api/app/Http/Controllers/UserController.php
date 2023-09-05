@@ -58,7 +58,7 @@ class UserController extends Controller
                 'email' => $user['email'],
                 'position' => $user['position'],
                 'password' => bcrypt($user['password'])
-            ]);
+            ])->sendEmailVerificationNotification();
             $auth = new AuthController();
             return $auth->login($request,201);
         } catch (QueryException $e) {

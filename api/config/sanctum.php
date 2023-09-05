@@ -46,7 +46,7 @@ return [
     |
     */
 
-    'expiration' => null,
+    'expiration' => 30 * 24 * 60, //formato utilizado: dia horas e minutos (escolhido 30 dias para ser revogado um token
 
     /*
     |--------------------------------------------------------------------------

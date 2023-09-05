@@ -44,3 +44,5 @@ axios.interceptors.response.use(function (response) {
   }
   return Promise.reject(error);
 });
+
+console.log(localStorage.getItem('token'));
